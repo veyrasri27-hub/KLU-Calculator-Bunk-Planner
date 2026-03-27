@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://veyrasri27-hub.github.io/KLU-Calculator-Bunk-Planner/sitemap.xml
