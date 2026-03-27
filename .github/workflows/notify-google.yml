@@ -1,0 +1,11 @@
+on:
+  push:
+    branches: [main]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Request Indexing
+        run: |
+          curl "https://www.google.com/ping?sitemap=https://veyrasri27-hub.github.io/KLU-Calculator-Bunk-Planner/sitemap.xml"
