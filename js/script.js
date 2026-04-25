@@ -20,8 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const remainingInputsDiv = document.getElementById('remaining-inputs');
   const calcCurrentBtn = document.getElementById('calc-current');
   const calcBunkBtn = document.getElementById('calc-bunk');
-  const zoneButtons = document.querySelectorAll('.zone-btn');
-  let activeZone = 'bunk';
+  let mode = 'bunk';
+  let lastRenderedType = '';
 
   themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('light');
@@ -31,15 +31,30 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   document.getElementById('current-btn').addEventListener('click', () => {
+    forceSaveAllInputs(); // Sync state before UI change
     habitat.scrollIntoView({ behavior: 'smooth' });
     currentSection.classList.remove('hidden');
     bunkSection.classList.add('hidden');
   });
+
   document.getElementById('bunk-btn').addEventListener('click', () => {
+    forceSaveAllInputs(); // Sync state before UI change
     habitat.scrollIntoView({ behavior: 'smooth' });
     bunkSection.classList.remove('hidden');
     currentSection.classList.add('hidden');
+    activateMode('bunk');
   });
+
+  const safeZoneBtn = document.getElementById('safe-zone-btn');
+  if (safeZoneBtn) {
+    safeZoneBtn.addEventListener('click', () => {
+      habitat.scrollIntoView({ behavior: 'smooth' });
+      bunkSection.classList.remove('hidden');
+      currentSection.classList.add('hidden');
+      activateMode('safe');
+    });
+  }
+
   document.querySelectorAll('.back-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       currentSection.classList.add('hidden');
@@ -48,285 +63,389 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  zoneButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      zoneButtons.forEach(btn => {
-        btn.classList.toggle('active', btn === button);
-        btn.setAttribute('aria-selected', (btn === button).toString());
-      });
-      activeZone = button.dataset.zone;
-    });
-  });
-
-  function renderCurrentInputs() {
-    const type = bunkTypeSelect.value;
-    bunkInputsDiv.innerHTML = '<h3>Current Status</h3>';
-    componentsList[type].forEach(comp => {
-      const className = comp.toLowerCase();
-      bunkInputsDiv.innerHTML += `
-        <div class="component-header ${className}">${comp}</div>
-        <label>
-          ${comp} Conducted:
-          <input type="number" class="conducted" data-comp="${comp}" min="0">
-        </label>
-        <label>
-          ${comp} Attended:
-          <input type="number" class="attended" data-comp="${comp}" min="0">
-        </label>
-      `;
-    });
-  }
-
-  function renderRemainingInputs() {
-    const method = document.querySelector('input[name="remaining-type"]:checked').value;
-    const type = bunkTypeSelect.value;
-    remainingInputsDiv.innerHTML = '<h3>Remaining Classes</h3>';
-    if (method === 'direct') {
-      componentsList[type].forEach(comp => {
-        remainingInputsDiv.innerHTML += `
-          <label>
-            ${comp} future classes:
-            <input type="number" class="future" data-comp="${comp}" min="0">
-          </label>
-        `;
-      });
-      return;
+  function activateMode(newMode) {
+    mode = newMode;
+    bunkSection.dataset.mode = newMode;
+    const bunkerTitle = bunkSection.querySelector('h2');
+    if (bunkerTitle) {
+      bunkerTitle.textContent = newMode === 'safe' ? 'Safe Zone (Compulsory Attendance)' : 'Bunk Planner (Safe Bunks)';
     }
-    const unitLabel = method === 'weeks' ? 'Weeks remaining' : 'Months remaining';
-    remainingInputsDiv.innerHTML += `
-      <label>
-        ${unitLabel}:
-        <input type="number" id="remain-duration" min="0">
-      </label>
-    `;
-    componentsList[type].forEach(comp => {
-      remainingInputsDiv.innerHTML += `
-        <label>
-          ${comp} per ${method === 'weeks' ? 'week' : 'month'}:
-          <input type="number" class="per-unit" data-comp="${comp}" min="0">
-        </label>
-      `;
-    });
+    calcBunkBtn.textContent = newMode === 'safe' ? 'Calculate Compulsory Attendance' : 'Calculate Safe Bunks';
   }
 
-  bunkTypeSelect.addEventListener('change', () => {
-    renderCurrentInputs();
-    renderRemainingInputs();
-  });
-  document.querySelectorAll('input[name="remaining-type"]').forEach(radio => {
-    radio.addEventListener('change', renderRemainingInputs);
-  });
-  bunkTypeSelect.dispatchEvent(new Event('change'));
-calcCurrentBtn.addEventListener('click', () => {
-  const entries = [
-    { id: 'lecture-pct', name: 'Lecture' },
-    { id: 'tutorial-pct', name: 'Tutorial' },
-    { id: 'practical-pct', name: 'Practical' },
-    { id: 'skilling-pct', name: 'Skilling' }
-  ];
-  let num = 0;
-  let den = 0;
-  entries.forEach(entry => {
-    const value = document.getElementById(entry.id).value;
-    if (value === '') return;
-    const pct = parseFloat(value) || 0;
-    num += pct * weights[entry.name];
-    den += weights[entry.name];
-  });
-  if (den === 0) {
-    currentResult.innerHTML = '<p class="red">Enter at least Lecture % before calculating.</p>';
-    currentResult.classList.remove('hidden');
-    return;
+  // FIX 1: Disable scroll-wheel increment/decrement on number inputs (Laptop issue)
+  document.addEventListener('wheel', (event) => {
+    if (document.activeElement && document.activeElement.type === 'number') {
+      event.preventDefault();
+      document.activeElement.blur();
+    }
+  }, { passive: false });
+
+// 1. Load from localStorage on startup
+const globalState = JSON.parse(localStorage.getItem('attendance-planner-state')) || {};
+
+// 2. Immediate synchronous state save to prevent corruption
+bunkSection.addEventListener('input', (e) => {
+  if (e.target.tagName === 'INPUT' && e.target.id) {
+    const key = getInputKey(e.target);
+    globalState[key] = e.target.value; // Save immediately, no debounce
   }
-  const pct = num / den;
-  let status = 'Detention risk ❌';
-  let cls = 'red';
-  if (pct >= 85) {
-    status = 'Good ✅ Eligible';
-    cls = 'green';
-  } else if (pct >= 75) {
-    status = 'Condonation ⚠️';
-    cls = 'orange';
-  }
-  currentResult.innerHTML = `
-    <p><strong>Overall: ${pct.toFixed(2)}%</strong></p>
-    <p class="${cls}">Status: ${status}</p>
-  `;
-  currentResult.classList.remove('hidden');
 });
 
-calcBunkBtn.addEventListener('click', () => {
-  const targetRaw = document.getElementById('target-pct').value;
-  const target = parseFloat(targetRaw);
-  if (!isFinite(target) || target < 0 || target > 100) {
-    bunkResult.innerHTML = '<p class="red">Enter a valid target percentage (0–100).</p>';
-    bunkResult.classList.remove('hidden');
-    return;
+// 3. Stable Key Generator (Ignores classes)
+function getInputKey(input) {
+  const comp = input.dataset.comp || 'none';
+  const type = input.classList.contains('conducted') ? 'cond' :
+               input.classList.contains('attended') ? 'attn' :
+               input.classList.contains('future') ? 'fut' :
+               input.classList.contains('per-unit') ? 'unit' : 'misc';
+  return `${comp}-${type}-${input.id || ''}`;
+}
+
+function getSavedInputValue(comp, type, id = '') {
+  const key = `${comp}-${type}-${id}`;
+  return globalState[key] || '';
+}
+
+function restoreValues() {
+  if (globalState['remaining-type']) {
+    const radio = document.querySelector(`input[name="remaining-type"][value="${globalState['remaining-type']}"]`);
+    if (radio) radio.checked = true;
   }
+}
 
-  const method = document.querySelector('input[name="remaining-type"]:checked').value;
-  const componentStats = [];
-  const errors = [];
-
-  componentsList[bunkTypeSelect.value].forEach(comp => {
-    const conductedInput = bunkInputsDiv.querySelector(`.conducted[data-comp="${comp}"]`);
-    const attendedInput = bunkInputsDiv.querySelector(`.attended[data-comp="${comp}"]`);
-    const conducted = parseFloat(conductedInput.value) || 0;
-    const attended = parseFloat(attendedInput.value) || 0;
-    if (attended > conducted) {
-      errors.push(`${comp}: attended cannot exceed conducted.`);
-    }
-    componentStats.push({ comp, conducted, attended, future: 0 });
+function forceSaveAllInputs() {
+  document.querySelectorAll('#bunk-section input').forEach(input => {
+    const key = getInputKey(input);
+    globalState[key] = input.value;
   });
+  const selectedMethod = document.querySelector('input[name="remaining-type"]:checked');
+  if (selectedMethod) globalState['remaining-type'] = selectedMethod.value;
+  
+  // Persist to storage
+  localStorage.setItem('attendance-planner-state', JSON.stringify(globalState));
+}
 
-  if (errors.length) {
-    bunkResult.innerHTML = `<p class="red">${errors.join(' ')}</p>`;
-    bunkResult.classList.remove('hidden');
+function renderFunctions() {
+  forceSaveAllInputs();
+  renderCurrentInputs();
+  renderRemainingInputs();
+}
+
+// ✅ FIXED: Now preserves values and prevents DOM mutation cascades
+function renderCurrentInputs() {
+  const type = bunkTypeSelect.value;
+  
+  // If the type is the same, only update values, don't destroy DOM
+  if (type === lastRenderedType) {
+    document.querySelectorAll('#bunk-current-inputs input').forEach(input => {
+      const key = getInputKey(input);
+      if (globalState[key]) input.value = globalState[key];
+    });
     return;
   }
+
+  let html = '<h3>Current Status</h3>';
+  componentsList[type].forEach(comp => {
+    const safeCompName = comp.toLowerCase().replace(/\s+/g, '-');
+    html += `
+      <div class="component-card">
+        <div class="component-header">${comp}</div>
+        <label>Conducted: <input type="number" class="conducted" id="cond-${safeCompName}" name="cond-${safeCompName}" data-comp="${comp}" min="0" autocomplete="off" value="${getSavedInputValue(comp, 'cond')}"></label>
+        <label>Attended: <input type="number" class="attended" id="attn-${safeCompName}" name="attn-${safeCompName}" data-comp="${comp}" min="0" autocomplete="off" value="${getSavedInputValue(comp, 'attn')}"></label>
+      </div>`;
+  });
+  bunkInputsDiv.innerHTML = html;
+  restoreValues();
+  lastRenderedType = type;
+}
+
+function renderRemainingInputs() {
+  const methodInput = document.querySelector('input[name="remaining-type"]:checked');
+  const method = methodInput ? methodInput.value : 'direct';
+  const type = bunkTypeSelect.value;
+  const html = ['<h3>Remaining Classes</h3>'];
 
   if (method === 'direct') {
-    remainingInputsDiv.querySelectorAll('.future').forEach(input => {
-      const comp = input.dataset.comp;
-      const entry = componentStats.find(item => item.comp === comp);
-      if (entry) {
-        entry.future = Math.max(0, parseFloat(input.value) || 0);
-      }
+    componentsList[type].forEach(comp => {
+      const safeCompName = comp.toLowerCase().replace(/\s+/g, '-');
+      html.push(`<label>${comp} future classes: <input type="number" class="future" id="fut-${safeCompName}" name="fut-${safeCompName}" data-comp="${comp}" min="0" autocomplete="off" value="${getSavedInputValue(comp, 'fut')}"></label>`);
     });
   } else {
-    const duration = parseFloat(document.getElementById('remain-duration').value) || 0;
-    remainingInputsDiv.querySelectorAll('.per-unit').forEach(input => {
-      const comp = input.dataset.comp;
-      const entry = componentStats.find(item => item.comp === comp);
-      if (entry) {
-        entry.future = Math.max(0, duration * (parseFloat(input.value) || 0));
-      }
+    const unitLabel = method === 'weeks' ? 'Weeks remaining' : 'Months remaining';
+    html.push(`<label>${unitLabel}: <input type="number" id="remain-duration" name="remain-duration" min="0" autocomplete="off" value="${getSavedInputValue('none', 'misc', 'remain-duration')}"></label>`);
+    componentsList[type].forEach(comp => {
+      const safeCompName = comp.toLowerCase().replace(/\s+/g, '-');
+      html.push(`<label>${comp} per ${method === 'weeks' ? 'week' : 'month'}: <input type="number" class="per-unit" id="unit-${safeCompName}" name="unit-${safeCompName}" data-comp="${comp}" min="0" autocomplete="off" value="${getSavedInputValue(comp, 'unit')}"></label>`);
     });
   }
 
-  const currentPercents = componentStats.map(entry => ({
-    comp: entry.comp,
-    pct: entry.conducted > 0 ? (entry.attended / entry.conducted) * 100 : 0
-  }));
-  const currentOverall = calculateOverall(currentPercents);
+  remainingInputsDiv.innerHTML = html.join('');
+  restoreValues();
+}
 
-  if (currentOverall < target) {
-    bunkResult.innerHTML = `
-      <p class="red">Current SO ${currentOverall.toFixed(2)}% is below ${target}%. Not safe — attend every future class.</p>
-    `;
-    bunkResult.classList.remove('hidden');
-    return;
-  }
+// Add listeners once
+bunkTypeSelect.addEventListener('change', renderFunctions);
 
-  const totalFutureClasses = componentStats.reduce((sum, entry) => sum + (entry.future || 0), 0);
-  if (totalFutureClasses === 0) {
-    bunkResult.innerHTML = `
-      <p>No future classes recorded → final attendance locked at <strong>${currentOverall.toFixed(2)}%</strong>.</p>
-    `;
-    bunkResult.classList.remove('hidden');
-    return;
-  }
-
-  const plan = findOptimalPlan(componentStats, target);
-  if (!plan) {
-    const perfectSO = calculateOverall(
-      componentStats.map(entry => ({
-        comp: entry.comp,
-        pct: entry.conducted + entry.future > 0
-          ? ((entry.attended + entry.future) / (entry.conducted + entry.future)) * 100
-          : 0
-      }))
-    );
-    bunkResult.innerHTML = `
-      <p class="red">Even 100% attendance cannot reach ${target}%. Maximum achievable SO ≈ ${perfectSO.toFixed(2)}%.</p>
-    `;
-    bunkResult.classList.remove('hidden');
-    return;
-  }
-
-  const componentCards = plan.perComponent.map(detail => `
-    <div class="component-percent-card">
-      <strong>${detail.comp}</strong>
-      <p>Future: ${detail.future} | Attend: ${detail.attend} | Bunk: ${detail.bunk}</p>
-      <p>New ${detail.comp}% = ${detail.pct.toFixed(2)}%</p>
-    </div>
-  `).join('');
-
-  bunkResult.innerHTML = `
-    <p><strong>Current SO:</strong> ${currentOverall.toFixed(2)}%</p>
-    <p><strong>Target:</strong> ${target}%</p>
-    <p class="green">Status: Safe Zone ✅ (closest SO above target with maximum bunk)</p>
-    <div class="component-percent-grid">${componentCards}</div>
-    <p style="margin-top:0.75rem;">Projected Final SO = <strong>${plan.finalSO.toFixed(2)}%</strong></p>
-  `;
-  bunkResult.classList.remove('hidden');
+document.querySelectorAll('input[name="remaining-type"]').forEach(radio => {
+  radio.addEventListener('change', renderFunctions);
 });
 
-function calculateOverall(percentList) {
-  let weightedSum = 0;
-  let totalWeight = 0;
-  percentList.forEach(({ comp, pct }) => {
-    const weight = weights[comp] || 0;
-    weightedSum += pct * weight;
-    totalWeight += weight;
-  });
-  return totalWeight > 0 ? weightedSum / totalWeight : 0;
-}
+bunkTypeSelect.dispatchEvent(new Event('change'));
 
-function findOptimalPlan(componentStats, target) {
-  let best = null;
-  const plan = new Array(componentStats.length).fill(0);
-  const totalFuture = componentStats.reduce((sum, entry) => sum + (entry.future || 0), 0);
-
-  const evaluate = () => {
-    const percentList = [];
-    let totalAttend = 0;
-    componentStats.forEach((entry, index) => {
-      const attend = plan[index];
-      totalAttend += attend;
-      const totalConducted = entry.conducted + entry.future;
-      const totalAttended = entry.attended + attend;
-      const pct = totalConducted > 0 ? (totalAttended / totalConducted) * 100 : 0;
-      percentList.push({ comp: entry.comp, pct });
-    });
-    const finalSO = calculateOverall(percentList);
-    if (finalSO < target) return;
-    const delta = finalSO - target;
-    const bunk = totalFuture - totalAttend;
-    if (
-      !best ||
-      delta < best.delta ||
-      (delta === best.delta && bunk > best.totalBunk)
-    ) {
-      best = {
-        delta,
-        finalSO,
-        totalBunk: bunk,
-        perComponent: componentStats.map((entry, index) => ({
-          comp: entry.comp,
-          future: entry.future,
-          attend: plan[index],
-          bunk: entry.future - plan[index],
-          pct: percentList[index].pct
-        }))
-      };
+// Setup MutationObserver for autofill detection after initial render
+const observer = new MutationObserver((mutations) => {
+  mutations.forEach((mutation) => {
+    if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
+      const input = mutation.target;
+      if (input.matches(':-webkit-autofill') || input.matches(':-moz-autofill')) {
+        const key = getInputKey(input);
+        globalState[key] = input.value;
+      }
     }
-  };
+  });
+});
 
-  const dfs = index => {
-    if (index === componentStats.length) {
-      evaluate();
+// Observe all inputs in bunk-section
+document.querySelectorAll('#bunk-section input').forEach(input => {
+  observer.observe(input, { attributes: true, attributeFilter: ['value'] });
+});
+
+// Save inputs on change
+bunkSection.addEventListener('input', (e) => {
+  if (e.target.id) {
+    forceSaveAllInputs();
+  }
+});
+
+  function calculateOverall(percentList) {
+    let weightedSum = 0;
+    let totalWeight = 0;
+    percentList.forEach(({ comp, pct }) => {
+      const weight = weights[comp] || 0;
+      weightedSum += pct * weight;
+      totalWeight += weight;
+    });
+    return totalWeight > 0 ? weightedSum / totalWeight : 0;
+  }
+
+  function readStats() {
+    const type = bunkTypeSelect.value;
+    const method = document.querySelector('input[name="remaining-type"]:checked').value;
+    const componentStats = [];
+
+    componentsList[type].forEach(comp => {
+      const safeCompName = comp.toLowerCase().replace(/\s+/g, '-');
+      const conductedInput = document.getElementById(`cond-${safeCompName}`);
+      const attendedInput = document.getElementById(`attn-${safeCompName}`);
+      const conducted = parseFloat(conductedInput?.value) || 0;
+      const attended = parseFloat(attendedInput?.value) || 0;
+
+      let future = 0;
+      if (method === 'direct') {
+        const futureInput = document.getElementById(`fut-${safeCompName}`);
+        future = parseFloat(futureInput?.value) || 0;
+      } else {
+        const duration = parseFloat(document.getElementById('remain-duration')?.value) || 0;
+        const perUnitInput = document.getElementById(`unit-${safeCompName}`);
+        const perUnit = parseFloat(perUnitInput?.value) || 0;
+        future = duration * perUnit;
+      }
+      componentStats.push({ comp, conducted, attended, future });
+    });
+    return componentStats;
+  }
+
+  function findOptimalPlan(componentStats, target) {
+    let best = null;
+    const plan = new Array(componentStats.length).fill(0);
+    const dfs = (index) => {
+      if (index === componentStats.length) {
+        const percentList = [];
+        let totalAttend = 0;
+        componentStats.forEach((entry, i) => {
+          totalAttend += plan[i];
+          const totalConducted = entry.conducted + entry.future;
+          const totalAttended = entry.attended + plan[i];
+          const pct = totalConducted > 0 ? (totalAttended / totalConducted) * 100 : 0;
+          percentList.push({ comp: entry.comp, pct });
+        });
+        const finalSO = calculateOverall(percentList);
+        if (finalSO < target) return;
+        const delta = finalSO - target;
+        const bunk = componentStats.reduce((sum, e, i) => sum + (e.future - plan[i]), 0);
+        if (!best || delta < best.delta || (delta === best.delta && bunk > best.totalBunk)) {
+          best = { delta, finalSO, totalBunk: bunk, perComponent: componentStats.map((e, i) => ({
+            comp: e.comp, future: e.future, attend: plan[i], bunk: e.future - plan[i], pct: percentList[i].pct
+          })) };
+        }
+        return;
+      }
+      const future = componentStats[index].future;
+      for (let attend = 0; attend <= future; attend++) {
+        plan[index] = attend;
+        dfs(index + 1);
+      }
+      plan[index] = 0;
+    };
+    dfs(0);
+    return best;
+  }
+
+  function findSafeZonePlan(componentStats, target) {
+    let best = null;
+    const plan = new Array(componentStats.length).fill(0);
+    const totalFuture = componentStats.reduce((sum, e) => sum + e.future, 0);
+    if (totalFuture === 0) return null;
+
+    const dfs = (index) => {
+      if (index === componentStats.length) {
+        const percentList = [];
+        let totalAttend = 0;
+        componentStats.forEach((entry, i) => {
+          totalAttend += plan[i];
+          const totalConducted = entry.conducted + entry.future;
+          const totalAttended = entry.attended + plan[i];
+          const pct = totalConducted > 0 ? (totalAttended / totalConducted) * 100 : 0;
+          percentList.push({ comp: entry.comp, pct });
+        });
+        const finalSO = calculateOverall(percentList);
+        if (finalSO < target) return;
+        const delta = finalSO - target;
+        if (!best || delta < best.delta || (delta === best.delta && totalAttend < best.totalAttend)) {
+          best = { delta, finalSO, totalAttend, perComponent: componentStats.map((e, i) => ({
+            comp: e.comp, future: e.future, compulsory: plan[i], pct: percentList[i].pct
+          })) };
+        }
+        return;
+      }
+      const future = componentStats[index].future;
+      for (let attend = 0; attend <= future; attend++) {
+        plan[index] = attend;
+        dfs(index + 1);
+      }
+      plan[index] = 0;
+    };
+    dfs(0);
+    return best;
+  }
+
+  calcCurrentBtn.addEventListener('click', () => {
+    const entries = [
+      { id: 'lecture-pct', name: 'Lecture' },
+      { id: 'tutorial-pct', name: 'Tutorial' },
+      { id: 'practical-pct', name: 'Practical' },
+      { id: 'skilling-pct', name: 'Skilling' }
+    ];
+    let num = 0, den = 0;
+    entries.forEach(entry => {
+      const value = document.getElementById(entry.id).value;
+      if (value === '') return;
+      const pct = parseFloat(value) || 0;
+      num += pct * weights[entry.name];
+      den += weights[entry.name];
+    });
+    if (den === 0) {
+      currentResult.innerHTML = '<p class="red">Enter at least Lecture % before calculating.</p>';
+      currentResult.classList.remove('hidden');
       return;
     }
-    const future = componentStats[index].future;
-    for (let attend = 0; attend <= future; attend++) {
-      plan[index] = attend;
-      dfs(index + 1);
-    }
-    plan[index] = 0;
-  };
+    const pct = num / den;
+    let status = 'Detention risk ❌';
+    let cls = 'red';
+    if (pct >= 85) { status = 'Good ✅ Eligible'; cls = 'green'; }
+    else if (pct >= 75) { status = 'Condonation ⚠️'; cls = 'orange'; }
+    currentResult.innerHTML = `<p><strong>Overall: ${pct.toFixed(2)}%</strong></p><p class="${cls}">Status: ${status}</p>`;
+    currentResult.classList.remove('hidden');
+  });
 
-  dfs(0);
-  return best;
-}
+  calcBunkBtn.addEventListener('click', () => {
+    const targetRaw = document.getElementById('target-pct').value;
+    const target = parseFloat(targetRaw);
+    if (!isFinite(target) || target < 0 || target > 100) {
+      bunkResult.innerHTML = '<p class="red">Enter a valid target percentage (0–100).</p>';
+      bunkResult.classList.remove('hidden');
+      return;
+    }
+
+    const componentStats = readStats();
+
+    const errors = [];
+    componentStats.forEach(entry => {
+      if (entry.attended > entry.conducted) errors.push(`${entry.comp}: attended cannot exceed conducted`);
+    });
+    if (errors.length) {
+      bunkResult.innerHTML = `<p class="red">${errors.join('<br>')}</p>`;
+      bunkResult.classList.remove('hidden');
+      return;
+    }
+
+    const currentPercents = componentStats.map(entry => ({
+      comp: entry.comp,
+      pct: entry.conducted > 0 ? (entry.attended / entry.conducted) * 100 : 0
+    }));
+    const currentOverall = calculateOverall(currentPercents);
+
+    if (mode === 'bunk' && currentOverall < target) {
+      bunkResult.innerHTML = `<p class="red">Current SO ${currentOverall.toFixed(2)}% is below ${target}%. Not safe — go to Safe Zone option.</p>`;
+      bunkResult.classList.remove('hidden');
+      return;
+    }
+
+    const totalFuture = componentStats.reduce((sum, e) => sum + e.future, 0);
+    if (totalFuture === 0) {
+      bunkResult.innerHTML = `<p>No future classes recorded → final attendance locked at <strong>${currentOverall.toFixed(2)}%</strong>.</p>`;
+      bunkResult.classList.remove('hidden');
+      return;
+    }
+
+    let plan;
+    if (mode === 'bunk') {
+      plan = findOptimalPlan(componentStats, target);
+    } else {
+      plan = findSafeZonePlan(componentStats, target);
+    }
+
+    if (!plan) {
+      let advice = 'Consider medical/documentation or adjust your RP (try 85%).';
+      if (target === 75) {
+        advice = 'Consider condonation fee, medical certificate, or adjusting RP to 85%.';
+      } else if (target === 85) {
+        advice = 'Consider condonation fee or medical certificate.';
+      } else if (target === 90) {
+        advice = 'Very high target; consider medical certificate or adjusting RP to 85%.';
+      }
+      const perfectSO = calculateOverall(componentStats.map(e => ({
+        comp: e.comp,
+        pct: (e.conducted + e.future > 0) ? ((e.attended + e.future) / (e.conducted + e.future)) * 100 : 0
+      })));
+      bunkResult.innerHTML = `<p class="red">Even 100% attendance cannot reach ${target}%. Max possible SO ≈ ${perfectSO.toFixed(2)}%. ${advice}</p>`;
+      bunkResult.classList.remove('hidden');
+      return;
+    }
+
+    let html = `<p><strong>Current SO:</strong> ${currentOverall.toFixed(2)}%</p>`;
+    html += `<p><strong>Target:</strong> ${target}%</p>`;
+
+    if (mode === 'bunk') {
+      html += `<p class="green">✅ Safe Bunks Calculated (maximum skips while staying above target)</p>`;
+      const cards = plan.perComponent.map(d => `
+        <div class="component-percent-card">
+          <strong>${d.comp}</strong><br>
+          Future: ${d.future} | Attend: ${d.attend} | Bunk: <strong>${d.bunk}</strong><br>
+          New ${d.comp}% = ${d.pct.toFixed(2)}%
+        </div>`).join('');
+      html += `<div class="component-percent-grid">${cards}</div>`;
+      html += `<p>Projected Final SO = <strong>${plan.finalSO.toFixed(2)}%</strong></p>`;
+    } else {
+      html += `<p class="green">✅ Safe Zone – Minimum compulsory attendance</p>`;
+      const lines = plan.perComponent.map(d => `
+        <p><strong>${d.comp}:</strong> Attend <strong>${d.compulsory}</strong> of ${d.future} future classes → ${d.pct.toFixed(2)}%</p>`).join('');
+      html += lines;
+      html += `<p><strong>Warning:</strong> If you want to bunk, you must attend these compulsory classes first. Projected Final SO = <strong>${plan.finalSO.toFixed(2)}%</strong></p>`;
+    }
+
+    bunkResult.innerHTML = html;
+    bunkResult.classList.remove('hidden');
+  });
 });
