@@ -1,55 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KL University Attendance & Bunk Planner | Free Tool</title>
-  <meta name="description" content="KL University Attendance Calculator with L-T-P-S + Bunk Planner. Track weighted attendance and plan safe bunks to stay above 85%. Free tool for students.">
+     <title>klu attendance calculator</title>
+   <title>klu calculator</title>
+     <title>klu</title>
+     <title>klu bunk planner</title>
   
-  <!-- Additional SEO Meta Tags -->
-  <meta name="keywords" content="KL University, attendance calculator, bunk planner, L-T-P-S, safe attendance, student tool, KLU attendance, weighted attendance">
-  <meta name="author" content="Veera0, Sri, Veyron">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://your-domain.com"> <!-- Replace with your actual URL -->
+  <meta name="description" content="KL University Attendance Calculator with L-T-P-S + Bunk Planner. Track weighted attendance and plan safe bunks to stay above 85%.">
+  <style>
+:root {
+  --bg: radial-gradient(circle at top, rgba(0, 191, 255, 0.25), transparent 45%), #05060a;
+  --card: rgba(13, 23, 40, 0.9);
+  --border: rgba(255, 255, 255, 0.1);
+  --text: #e7ecff;
+  --muted: rgba(231, 235, 255, 0.7);
+  --accent: #38f5ff;
+  --accent-strong: #0d9eff;
 
-  <!-- Open Graph (Facebook, LinkedIn, etc.) -->
-  <meta property="og:title" content="KL University Attendance & Bunk Planner | Free Tool">
-  <meta property="og:description" content="Calculate weighted attendance for L-T-P-S components and plan safe bunks. Stay above 85% for KL University students.">
-  <meta property="og:image" content="https://your-domain.com/images/klu-attendance-thumbnail.jpg"> <!-- Replace with actual image URL -->
-  <meta property="og:url" content="https://your-domain.com">
-  <meta property="og:type" content="website">
+  --success: #51ca73;
+  --warning: #f2b52c;
+  --error: #ff6b6b;
 
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="KL University Attendance & Bunk Planner | Free Tool">
-  <meta name="twitter:description" content="Calculate weighted attendance for L-T-P-S components and plan safe bunks. Stay above 85% for KL University students.">
-  <meta name="twitter:image" content="https://your-domain.com/images/klu-attendance-thumbnail.jpg"> <!-- Replace with actual image URL -->
-  <meta name="twitter:site" content="@your_twitter_handle"> <!-- Optional -->
+  --radius: 22px;
+  --shadow-soft: 0 25px 60px rgba(0, 0, 0, 0.6);
 
-  <!-- Structured Data (JSON-LD) for Rich Snippets -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "KL University Attendance & Bunk Planner",
-    "description": "Free tool to calculate weighted L-T-P-S attendance and plan safe bunks for KL University students.",
-    "url": "https://your-domain.com",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web Browser",
-    "author": {
-      "@type": "Organization",
-      "name": "Veera0, Sri, Veyron"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
+  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+}
+
+/* Light Mode */
+body.light {
+  --bg: radial-gradient(circle at top, rgba(13, 110, 253, 0.25), transparent 45%), #f4f7fb;
+  --card: rgba(255, 255, 255, 0.95);
+  --border: rgba(15, 23, 42, 0.15);
+  --text: #0e0f1a;
+  --muted: rgba(15, 23, 42, 0.7);
+  --accent: #0d6efd;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 2rem 1.5rem;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: 0.3s ease;
+}
+
+/* Layout */
+main {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+/* Header */
+header {
+  margin-bottom: 2rem;
+}
+
+.header-content {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 1.75rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(16px);
+}
+
+.eyebrow {
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 2.5vw, 2.6rem);
+}
+
+.subtitle {
+  margin-top: 0.3rem;
+  color: var(--muted);
+}
+
+/* Theme Button */
+#theme-toggle {
+  border-radius: 999px;
+  padding: 0.8rem 1.5rem;
+  border: none;
+  background: linear-gradient(135deg, rgba(56, 245, 255, 0.25), rgba(13, 110, 253, 0.25));
+  color: var(--text);
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+#theme-toggle:hover {
+  transform: translateY(-2px);
+}
+
+/* Panels */
+.panel {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  backdrop-filter: blur(16px);
+  transition: 0.3s;
+}
+
+.panel:hover {
+  transform: translateY(-3px);
+  border-color: var(--accent);
+}
+
+/* Buttons */
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 0.95rem 1.25rem;
+  font-weight: 600;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text);
+  transition: 0.25s;
+}
+
+button:hover {
+  transform: translateY(-2px);
+}
+
+button.highlight {
+  background: linear-gradient(135deg, rgba(56, 245, 255, 0.4), rgba(13, 110, 253, 0.4));
+  color: #000;
+}
+
+/* Hero buttons */
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+/* Inputs */
+label {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+input,
+select {
+  margin-top: 0.35rem;
+  padding: 0.9rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(8, 12, 20, 0.6);
+  color: var(--text);
+}
+
+body.light input,
+body.light select {
+  background: rgba(255, 255, 255, 0.9);
+  color: #000;
+}
+
+input:focus,
+select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(56, 245, 255, 0.3);
+}
+
+/* Radio */
+.radio-group {
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.radio-group label {
+  flex-direction: row;
+  gap: 0.5rem;
+  color: var(--text);
+}
+
+input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+/* Results */
+.result-card {
+  margin-top: 1rem;
+  padding: 1.5rem;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.green { color: var(--success); }
+.orange { color: var(--warning); }
+.red { color: var(--error); }
+
+/* Component UI (from your 1st CSS) */
+.component-badge {
+  padding: 0.7rem 1.2rem;
+  border-radius: 999px;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.component-inputs {
+  border-left: 3px solid var(--accent);
+  padding: 1rem;
+  background: rgba(56, 245, 255, 0.05);
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+}
+
+/* Utility */
+.hidden {
+  display: none !important;
+}
+
+.back-btn {
+  margin-top: 1rem;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--muted);
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  body {
+    padding: 1rem;
   }
-  </script>
 
-  <link rel="stylesheet" href="css/style.css">
+  .panel {
+    padding: 1.5rem;
+  }
+
+  button {
+    width: 100%;
+  }
+}
+.hidden {
+  display: none !important;
+}
+.panel h2,
+.panel h3 {
+  margin-bottom: 1rem;
+  letter-spacing: 0.04em;
+}
+
+.component-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 245, 255, 0.4);
+  background: rgba(13, 23, 40, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(56, 245, 255, 0.15);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.95rem;
+  margin-top: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.component-header + label {
+  margin-top: 0.35rem;
+}
+
+.panel label {
+  margin-bottom: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: 16px;
+  background: rgba(8, 12, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.panel label input {
+  margin-top: 0.4rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 12px;
+  background: rgba(9, 14, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+#remaining-inputs label {
+  background: rgba(5, 8, 15, 0.85);
+  border-color: rgba(56, 245, 255, 0.2);
+}
+
+.result-card {
+  padding: 1.5rem;
+  border-radius: 18px;
+  background: rgba(5, 8, 15, 0.8);
+  border: 1px solid rgba(56, 245, 255, 0.3);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.45);
+}
+
+.component-percent-grid {
+  display: grid;
+  gap: 0.85rem;
+  margin-top: 1rem;
+}
+
+.component-percent-card {
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(9, 13, 21, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+button {
+  margin-top: 1rem;
+}
+.radio-group {
+  margin: 0 auto 1rem;
+  padding: 0.4rem;
+  border-radius: 24px;
+  background: rgba(5, 8, 15, 0.8);
+  border: 1px solid rgba(56, 245, 255, 0.25);
+  box-shadow: inset 0 0 15px rgba(56, 245, 255, 0.08);
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+  gap: 1rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 0.6rem;
+  border-radius: 16px;
+  background: rgba(9, 13, 21, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  font-weight: 600;
+  color: var(--text);
+}
+
+.radio-group label:last-child {
+  margin-bottom: 0;
+}
+
+.radio-group input[type="radio"] {
+  margin: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  accent-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
+  background: rgba(5, 8, 15, 0.9);
+}
+
+.radio-group legend {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+:root {
+  --bg-dark: #121212;
+  --text-dark: #e0e0e0;
+  --primary-dark: #1a73e8;
+  --secondary-dark: #2c2c2c;
+  --bg-light: #ffffff;
+  --text-light: #333333;
+  --primary-light: #1a73e8;
+  --secondary-light: #f0f0f0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+  transition: all 0.3s ease;
+}
+
+body.light {
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+/* Rest of the CSS remains the same as in your original implementation */
+  </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -71,6 +442,7 @@
       <div class="hero-actions">
         <button id="current-btn">Current Attendance %</button>
         <button id="bunk-btn" class="highlight">Bunk Planner</button>
+        <button id="safe-zone-btn">Safe Zone</button>
       </div>
     </section>
 
@@ -80,19 +452,19 @@
       <div class="grid">
         <label>
           Lecture %:
-          <input type="number" id="lecture-pct" min="0" max="100" step="0.01" placeholder="e.g. 92.5">
+          <input type="number" id="lecture-pct" min="0" max="100" step="0.01" placeholder="e.g. 92.5" autocomplete="off">
         </label>
         <label>
           Tutorial %:
-          <input type="number" id="tutorial-pct" min="0" max="100" step="0.01" placeholder="e.g. 80">
+          <input type="number" id="tutorial-pct" min="0" max="100" step="0.01" placeholder="e.g. 80" autocomplete="off">
         </label>
         <label>
           Practical %:
-          <input type="number" id="practical-pct" min="0" max="100" step="0.01" placeholder="e.g. 65">
+          <input type="number" id="practical-pct" min="0" max="100" step="0.01" placeholder="e.g. 65" autocomplete="off">
         </label>
         <label>
           Skilling %:
-          <input type="number" id="skilling-pct" min="0" max="100" step="0.01" placeholder="e.g. 90">
+          <input type="number" id="skilling-pct" min="0" max="100" step="0.01" placeholder="e.g. 90" autocomplete="off">
         </label>
       </div>
       <button id="calc-current">Calculate Overall %</button>
@@ -146,9 +518,9 @@
   </main>
 
   <footer>
-    <p>Free tool for KL University students | Built with ❤️ by VeyraSri </p>
+    <p>Free tool for KL University students | Built with ❤️ by VeyaSri</p>
   </footer>
 
-  <script src="js/script.js"></script>
+  <script src="js/script.js" defer></script>
 </body>
 </html>
