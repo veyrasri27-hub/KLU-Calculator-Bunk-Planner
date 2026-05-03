@@ -4,436 +4,37 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KL University Attendance & Bunk Planner | Free Tool</title>
-  <title>KLU Attendance Calculator | LTPS & Safe Bunk Planner</title>
-  <meta name="title" content="klu attendance">
-<meta name="title" content="KLU Attendance Calculator | LTPS & Safe Bunk Planner">
-<meta name="description" content="Calculate your KL University attendance percentage and safe bunks instantly. Supports LTPS weighted formula. Free tool for KLU students.">
-<meta name="keywords" content="KLU Attendance, KL University, Bunk Planner, LTPS Calculator, KLU ERP, Attendance Tracker">
-<meta name="robots" content="index, follow">
-  <meta property="og:type" content="website">
-<meta property="og:url" content="https://veyrasri27-hub.github.io/KLU-Calculator-Bunk-Planner/">
-<meta property="og:title" content="KLU Attendance & Bunk Planner">
-<meta property="og:description" content="Track your KLU LTPS attendance and plan your bunks effectively.">
-<meta property="og:image" content="https://veyrasri27-hub.github.io/KLU-Calculator-Bunk-Planner/preview-image.png">
-
-<meta property="twitter:card" content="summary_large_image">
-<meta property="twitter:title" content="KLU Attendance & Bunk Planner">
-<meta property="twitter:description" content="Calculate safe bunks and LTPS percentage for KL University.">
   <meta name="description" content="KL University Attendance Calculator with L-T-P-S + Bunk Planner. Track weighted attendance and plan safe bunks to stay above 85%.">
-  <style>
-:root {
-  --bg: radial-gradient(circle at top, rgba(0, 191, 255, 0.25), transparent 45%), #05060a;
-  --card: rgba(13, 23, 40, 0.9);
-  --border: rgba(255, 255, 255, 0.1);
-  --text: #e7ecff;
-  --muted: rgba(231, 235, 255, 0.7);
-  --accent: #38f5ff;
-  --accent-strong: #0d9eff;
-
-  --success: #51ca73;
-  --warning: #f2b52c;
-  --error: #ff6b6b;
-
-  --radius: 22px;
-  --shadow-soft: 0 25px 60px rgba(0, 0, 0, 0.6);
-
-  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
-}
-
-/* Light Mode */
-body.light {
-  --bg: radial-gradient(circle at top, rgba(13, 110, 253, 0.25), transparent 45%), #f4f7fb;
-  --card: rgba(255, 255, 255, 0.95);
-  --border: rgba(15, 23, 42, 0.15);
-  --text: #0e0f1a;
-  --muted: rgba(15, 23, 42, 0.7);
-  --accent: #0d6efd;
-}
-
-/* Reset */
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 2rem 1.5rem;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  transition: 0.3s ease;
-}
-
-/* Layout */
-main {
-  max-width: 980px;
-  margin: 0 auto;
-}
-
-/* Header */
-header {
-  margin-bottom: 2rem;
-}
-
-.header-content {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 1.75rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-soft);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  backdrop-filter: blur(16px);
-}
-
-.eyebrow {
-  letter-spacing: 0.2em;
-  text-transform: uppercase;
-  font-size: 0.85rem;
-  color: var(--accent);
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(2rem, 2.5vw, 2.6rem);
-}
-
-.subtitle {
-  margin-top: 0.3rem;
-  color: var(--muted);
-}
-
-/* Theme Button */
-#theme-toggle {
-  border-radius: 999px;
-  padding: 0.8rem 1.5rem;
-  border: none;
-  background: linear-gradient(135deg, rgba(56, 245, 255, 0.25), rgba(13, 110, 253, 0.25));
-  color: var(--text);
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-#theme-toggle:hover {
-  transform: translateY(-2px);
-}
-
-/* Panels */
-.panel {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 2rem;
-  margin-bottom: 2rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-soft);
-  backdrop-filter: blur(16px);
-  transition: 0.3s;
-}
-
-.panel:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-}
-
-/* Buttons */
-button {
-  border: none;
-  border-radius: 14px;
-  padding: 0.95rem 1.25rem;
-  font-weight: 600;
-  cursor: pointer;
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-  transition: 0.25s;
-}
-
-button:hover {
-  transform: translateY(-2px);
-}
-
-button.highlight {
-  background: linear-gradient(135deg, rgba(56, 245, 255, 0.4), rgba(13, 110, 253, 0.4));
-  color: #000;
-}
-
-/* Hero buttons */
-.hero-actions {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
-
-/* Grid */
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 1rem;
-}
-
-/* Inputs */
-label {
-  display: flex;
-  flex-direction: column;
-  font-size: 0.95rem;
-  color: var(--muted);
-}
-
-input,
-select {
-  margin-top: 0.35rem;
-  padding: 0.9rem;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: rgba(8, 12, 20, 0.6);
-  color: var(--text);
-}
-
-body.light input,
-body.light select {
-  background: rgba(255, 255, 255, 0.9);
-  color: #000;
-}
-
-input:focus,
-select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(56, 245, 255, 0.3);
-}
-
-/* Radio */
-.radio-group {
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  padding: 1rem;
-  margin-bottom: 1rem;
-}
-
-.radio-group label {
-  flex-direction: row;
-  gap: 0.5rem;
-  color: var(--text);
-}
-
-input[type="radio"] {
-  accent-color: var(--accent);
-}
-
-/* Results */
-.result-card {
-  margin-top: 1rem;
-  padding: 1.5rem;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
-}
-
-.green { color: var(--success); }
-.orange { color: var(--warning); }
-.red { color: var(--error); }
-
-/* Component UI (from your 1st CSS) */
-.component-badge {
-  padding: 0.7rem 1.2rem;
-  border-radius: 999px;
-  border: 1px solid var(--accent);
-  color: var(--accent);
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.component-inputs {
-  border-left: 3px solid var(--accent);
-  padding: 1rem;
-  background: rgba(56, 245, 255, 0.05);
-  border-radius: 12px;
-  margin-bottom: 1.5rem;
-}
-
-/* Utility */
-.hidden {
-  display: none !important;
-}
-
-.back-btn {
-  margin-top: 1rem;
-}
-
-/* Footer */
-footer {
-  text-align: center;
-  margin-top: 2rem;
-  color: var(--muted);
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  body {
-    padding: 1rem;
-  }
-
-  .panel {
-    padding: 1.5rem;
-  }
-
-  button {
-    width: 100%;
-  }
-}
-.hidden {
-  display: none !important;
-}
-.panel h2,
-.panel h3 {
-  margin-bottom: 1rem;
-  letter-spacing: 0.04em;
-}
-
-.component-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.85rem 1.25rem;
-  border-radius: 999px;
-  border: 1px solid rgba(56, 245, 255, 0.4);
-  background: rgba(13, 23, 40, 0.85);
-  box-shadow: inset 0 0 0 1px rgba(56, 245, 255, 0.15);
-  font-weight: 600;
-  text-transform: uppercase;
-  font-size: 0.95rem;
-  margin-top: 1rem;
-  margin-bottom: 0.75rem;
-}
-
-.component-header + label {
-  margin-top: 0.35rem;
-}
-
-.panel label {
-  margin-bottom: 1rem;
-  padding: 0.85rem 1rem;
-  border-radius: 16px;
-  background: rgba(8, 12, 20, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.panel label input {
-  margin-top: 0.4rem;
-  width: 100%;
-  padding: 0.9rem 1rem;
-  border-radius: 12px;
-  background: rgba(9, 14, 26, 0.9);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-#remaining-inputs label {
-  background: rgba(5, 8, 15, 0.85);
-  border-color: rgba(56, 245, 255, 0.2);
-}
-
-.result-card {
-  padding: 1.5rem;
-  border-radius: 18px;
-  background: rgba(5, 8, 15, 0.8);
-  border: 1px solid rgba(56, 245, 255, 0.3);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.45);
-}
-
-.component-percent-grid {
-  display: grid;
-  gap: 0.85rem;
-  margin-top: 1rem;
-}
-
-.component-percent-card {
-  padding: 1rem;
-  border-radius: 14px;
-  background: rgba(9, 13, 21, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-button {
-  margin-top: 1rem;
-}
-.radio-group {
-  margin: 0 auto 1rem;
-  padding: 0.4rem;
-  border-radius: 24px;
-  background: rgba(5, 8, 15, 0.8);
-  border: 1px solid rgba(56, 245, 255, 0.25);
-  box-shadow: inset 0 0 15px rgba(56, 245, 255, 0.08);
-}
-
-.radio-group label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: row-reverse;
-  gap: 1rem;
-  padding: 0.9rem 1rem;
-  margin-bottom: 0.6rem;
-  border-radius: 16px;
-  background: rgba(9, 13, 21, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  font-weight: 600;
-  color: var(--text);
-}
-
-.radio-group label:last-child {
-  margin-bottom: 0;
-}
-
-.radio-group input[type="radio"] {
-  margin: 0;
-  width: 1.4rem;
-  height: 1.4rem;
-  accent-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15);
-  background: rgba(5, 8, 15, 0.9);
-}
-
-.radio-group legend {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  color: var(--text);
-}
-:root {
-  --bg-dark: #121212;
-  --text-dark: #e0e0e0;
-  --primary-dark: #1a73e8;
-  --secondary-dark: #2c2c2c;
-  --bg-light: #ffffff;
-  --text-light: #333333;
-  --primary-light: #1a73e8;
-  --secondary-light: #f0f0f0;
-}
-
-body {
-  font-family: 'Roboto', sans-serif;
-  background-color: var(--bg-dark);
-  color: var(--text-dark);
-  line-height: 1.6;
-  margin: 0;
-  padding: 0;
-  transition: all 0.3s ease;
-}
-
-body.light {
-  background-color: var(--bg-light);
-  color: var(--text-light);
-}
-
-/* Rest of the CSS remains the same as in your original implementation */
-  </style>
+  <link rel="stylesheet" href="css/style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <aside class="sidebar" aria-label="Quick actions">
+    <button class="sidebar-button sidebar-menu-button" type="button" aria-label="Menu">
+      <span class="hamburger-icon" aria-hidden="true"></span>
+      <span class="sidebar-tooltip">Menu</span>
+    </button>
+    <button id="aura-guide-btn" class="sidebar-button" type="button" aria-label="Split Screen Setup Guide">
+      <img class="sidebar-anime-icon" src="assets/sidebar-split.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Split Screen Setup Guide</span>
+    </button>
+    <button id="history-btn" class="sidebar-button" type="button" aria-label="History">
+      <img class="sidebar-anime-icon" src="assets/sidebar-history.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">History</span>
+    </button>
+    <button id="feedback-btn" class="sidebar-button" type="button" aria-label="Feedback">
+      <img class="sidebar-anime-icon" src="assets/sidebar-feedback.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Feedback</span>
+    </button>
+    <button id="sidebar-signout-btn" class="sidebar-button hidden" type="button" aria-label="Sign Out">
+      <img class="sidebar-anime-icon" src="assets/sidebar-signout.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Sign Out</span>
+    </button>
+  </aside>
+
+  <!-- Header: shows the app title plus global theme/auth controls. -->
   <header>
     <div class="header-content">
       <div class="title-group">
@@ -441,24 +42,41 @@ body.light {
         <h1>Attendance & Bunk Planner</h1>
         <p class="subtitle">Weighted L-T-P-S Calculator | Stay above target % & plan safe bunks</p>
       </div>
-      <button id="theme-toggle" aria-pressed="false">Toggle Theme</button>
+      <div class="header-actions">
+        <!-- Theme button is connected to script.js and toggles dark/light mode. -->
+        <button id="theme-toggle" aria-pressed="false">Toggle Theme</button>
+        <!-- Auth button opens sign-in and is hidden after Firebase login. -->
+        <button id="auth-btn" class="ghost-btn" type="button">Sign in</button>
+      </div>
     </div>
   </header>
 
   <main>
+    <!-- Home panel: first screen with buttons that open each calculator/tool section. -->
     <section class="panel hero">
       <h2>Welcome</h2>
       <p>Use the tabs below to calculate your current weighted attendance or plan safe bunks for upcoming classes.</p>
       <div class="hero-actions">
-        <button id="current-btn">Current Attendance %</button>
-        <button id="bunk-btn" class="highlight">Bunk Planner</button>
-        <button id="safe-zone-btn">Safe Zone</button>
+        <!-- Navigation buttons: script.js listens to these ids and opens the matching section. -->
+        <div class="dashboard-primary-row">
+          <button id="current-btn" class="dashboard-card-btn" type="button">Current Attendance %</button>
+          <button id="bunk-btn" class="dashboard-card-btn highlight" type="button">Bunk Planner</button>
+          <button id="safe-zone-btn" class="dashboard-card-btn" type="button">Safe Zone</button>
+        </div>
+        <div class="dashboard-secondary-row">
+          <button id="launch-erp-btn" class="ghost-btn launch-erp-btn" type="button">Launch KLU ERP Side-by-Side</button>
+        </div>
       </div>
     </section>
 
+    <!-- Current Attendance section: calculates weighted attendance from portal percentages. -->
     <section id="current-section" class="panel hidden" aria-live="polite">
       <h2>Current Attendance Calculator</h2>
       <p>Enter component-wise percentages from the KLU portal. Leave fields blank if a component is absent.</p>
+      <label>
+        Calculation name (optional):
+        <input type="text" id="calc-name-current" maxlength="48" placeholder="e.g. DS Unit-2 (morning)" autocomplete="off">
+      </label>
       <div class="grid">
         <label>
           Lecture %:
@@ -477,14 +95,21 @@ body.light {
           <input type="number" id="skilling-pct" min="0" max="100" step="0.01" placeholder="e.g. 90" autocomplete="off">
         </label>
       </div>
+      <!-- Calculate button calls the current-attendance calculation listener in script.js. -->
       <button id="calc-current">Calculate Overall %</button>
+      <!-- Result card is filled dynamically after the user calculates. -->
       <div id="current-result" class="result-card hidden"></div>
       <button class="back-btn">Back to Home</button>
     </section>
 
+    <!-- Bunk Planner/Safe Zone section: reused for safe bunk planning and compulsory attendance. -->
     <section id="bunk-section" class="panel hidden" aria-live="polite">
       <h2>Bunk Planner</h2>
       <p>Choose your subject combination, enter current attendance data, and plan remaining classes safely.</p>
+      <label>
+        Calculation name (optional):
+        <input type="text" id="calc-name-bunk" maxlength="48" placeholder="e.g. OS (weekly)" autocomplete="off">
+      </label>
 
       <label>
         Subject Type:
@@ -500,6 +125,7 @@ body.light {
       </label>
       
 
+      <!-- Dynamic current-status inputs are inserted here based on selected subject type. -->
       <div id="bunk-current-inputs"></div>
 
       <label>
@@ -519,18 +145,111 @@ body.light {
         <label><input type="radio" name="remaining-type" value="months"> By months</label>
       </fieldset>
 
+      <!-- Dynamic future-class inputs are inserted here based on direct/week/month method. -->
       <div id="remaining-inputs"></div>
 
+      <!-- Calculate button runs either Bunk Planner or Safe Zone logic based on active mode. -->
       <button id="calc-bunk">Calculate Safe Bunks</button>
+      <!-- Result card is filled with safe bunks, compulsory attendance, or warning output. -->
       <div id="bunk-result" class="result-card hidden"></div>
+      <button class="back-btn">Back to Home</button>
+    </section>
+
+    <!-- History section: shows saved calculations for the signed-in user. -->
+    <section id="history-section" class="panel hidden" aria-live="polite">
+      <h2>History (30 days)</h2>
+      <p>Your saved calculations are stored on this device, linked to your login.</p>
+      <div class="history-actions">
+        <!-- Refresh reloads local history; clear deletes the signed-in user's local history. -->
+        <button id="refresh-history" class="ghost-btn" type="button">Refresh</button>
+        <button id="clear-history" class="ghost-btn danger-btn" type="button">Clear my history</button>
+      </div>
+      <!-- script.js renders history rows inside this container. -->
+      <div id="history-list" class="history-list"></div>
+      <button class="back-btn">Back to Home</button>
+    </section>
+
+    <!-- Feedback section: lets signed-in users save feedback locally for later review. -->
+    <section id="feedback-section" class="panel hidden" aria-live="polite">
+      <h2>Feedback</h2>
+      <p>Tell me what’s confusing, what’s missing, or what feature you want next.</p>
+      <label>
+        Your message:
+        <textarea id="feedback-text" rows="5" placeholder="Write here..." maxlength="800"></textarea>
+      </label>
+      <div class="grid">
+        <label>
+          Rating:
+          <select id="feedback-rating">
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Good</option>
+            <option value="3" selected>3 - Okay</option>
+            <option value="2">2 - Needs work</option>
+            <option value="1">1 - Bad</option>
+          </select>
+        </label>
+        <label>
+          Optional contact:
+          <input id="feedback-contact" type="text" placeholder="email/insta (optional)" maxlength="64" autocomplete="off">
+        </label>
+      </div>
+      <!-- Submit button calls submitFeedback() in script.js. -->
+      <button id="submit-feedback" class="highlight" type="button">Submit feedback</button>
+      <!-- Feedback status message is inserted here after submit. -->
+      <div id="feedback-result" class="result-card hidden"></div>
       <button class="back-btn">Back to Home</button>
     </section>
   </main>
 
+  <!-- Footer: small credit line at the bottom of the page. -->
   <footer>
-    <p>Free tool for KL University students | Built with ❤️ by VeyaSri</p>
+    <p>Free tool for KL University students | Built with VeyraSri</p>
   </footer>
 
+  <!-- Aura Guide Modal: step-by-step helper for opening ERP beside this planner. -->
+  <div id="auraModal" class="aura-modal hidden" role="dialog" aria-modal="true" aria-labelledby="auraTitle">
+    <div class="aura-content">
+      <div class="aura-character">
+        <img src="assets/aura-chan.svg" alt="Aura-chan guide" width="110" height="110">
+      </div>
+      <div class="aura-speech-bubble">
+        <h3 id="auraTitle">Hey Friend — let’s set up Split View.</h3>
+        <!-- script.js changes this body for each Aura guide step. -->
+        <div id="auraBody" class="aura-body"></div>
+        <div class="aura-actions">
+          <button id="aura-launch" class="aura-btn" type="button">1) Launch KLU ERP</button>
+          <button id="aura-next" class="aura-btn secondary" type="button">Next</button>
+          <button id="aura-close" class="aura-btn secondary" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal: protects Safe Zone, History, and Feedback features. -->
+  <div id="authModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authTitle">Sign in to unlock Safe Zone</h3>
+        <button id="auth-close" class="icon-btn" type="button" aria-label="Close">✕</button>
+      </div>
+      <p class="modal-subtitle">Current & Bunk Planner are free. Safe Zone requires login.</p>
+      <div class="modal-actions">
+        <button id="signin-google" class="highlight" type="button">Continue with Google</button>
+      </div>
+      <div class="divider"><span>or</span></div>
+      <label>
+        Email (magic link):
+        <input id="email-link-input" type="email" placeholder="you@klu.ac.in" autocomplete="email">
+      </label>
+      <button id="send-email-link" class="ghost-btn" type="button">Send sign-in link</button>
+      <!-- Authentication success/error messages are rendered here. -->
+      <div id="auth-result" class="result-card hidden"></div>
+    </div>
+  </div>
+
+  <!-- Firebase module exposes auth helpers before the main app logic runs. -->
+  <script type="module" src="js/firebase.js"></script>
+  <!-- Main app logic: navigation, calculations, history, feedback, and UI behavior. -->
   <script src="js/script.js" defer></script>
 </body>
 </html>
