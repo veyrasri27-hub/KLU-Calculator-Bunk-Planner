@@ -1,4 +1,3 @@
-
 :root {
   --sidebar-width: 80px;
   --bg: radial-gradient(circle at top right, #1a1a2e, #0a0a0a);
@@ -130,36 +129,6 @@ h1 {
   backdrop-filter: blur(12px);
   padding: 25px;
   border-radius: 20px;
-  text-align: center;
-}
-
-/* Mascot Container */
-.mascot-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  animation: mascotFloat 3s ease-in-out infinite;
-}
-
-.aura-mascot {
-  width: 140px;
-  height: 140px;
-  filter: drop-shadow(0 0 20px rgba(56, 245, 255, 0.6));
-  transition: transform 0.3s ease;
-}
-
-.aura-mascot:hover {
-  transform: scale(1.1);
-  filter: drop-shadow(0 0 30px rgba(56, 245, 255, 0.9));
-}
-
-@keyframes mascotFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
 }
 
 /* Buttons */
@@ -667,11 +636,6 @@ footer {
 
   .launch-erp-btn {
     min-width: 100%;
-  }
-
-  .aura-mascot {
-    width: 100px;
-    height: 100px;
   }
 }
 .hidden {
