@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Aura-chan mascot">
+  <defs>
+    <radialGradient id="bg" cx="35%" cy="25%" r="80%">
+      <stop offset="0%" stop-color="#38f5ff" stop-opacity=".25"/>
+      <stop offset="55%" stop-color="#0d9eff" stop-opacity=".08"/>
+      <stop offset="100%" stop-color="#05060a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="hair" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="40%" stop-color="#e9efff"/>
+      <stop offset="100%" stop-color="#cfd8ff"/>
+    </linearGradient>
+    <linearGradient id="aura" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#38f5ff" stop-opacity=".85"/>
+      <stop offset="60%" stop-color="#0d9eff" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#38f5ff" stop-opacity=".1"/>
+    </linearGradient>
+    <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+      <feGaussianBlur stdDeviation="10" result="blur"/>
+      <feColorMatrix in="blur" type="matrix"
+        values="0 0 0 0 0.20
+                0 0 0 0 0.95
+                0 0 0 0 1.00
+                0 0 0 .9 0" result="blue"/>
+      <feMerge>
+        <feMergeNode in="blue"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- Aura ring -->
+  <g filter="url(#glow)" opacity=".95">
+    <circle cx="256" cy="250" r="170" fill="none" stroke="url(#aura)" stroke-width="16"/>
+    <circle cx="256" cy="250" r="190" fill="none" stroke="#38f5ff" stroke-opacity=".18" stroke-width="10"/>
+  </g>
+
+  <!-- Hair mass -->
+  <path d="M128 405c0-140 45-250 128-250s128 110 128 250c0 34-57 65-128 65s-128-31-128-65z"
+        fill="url(#hair)" opacity=".96"/>
+
+  <!-- Head -->
+  <ellipse cx="256" cy="250" rx="95" ry="110" fill="#f6d9cf"/>
+
+  <!-- Elf ears -->
+  <path d="M152 260c-18-8-34 2-40 18-6 17 2 34 21 40 12 4 26-1 38-11"
+        fill="#f6d9cf"/>
+  <path d="M360 260c18-8 34 2 40 18 6 17-2 34-21 40-12 4-26-1-38-11"
+        fill="#f6d9cf"/>
+
+  <!-- Fringe -->
+  <path d="M165 230c22-58 62-90 91-92 45-2 74 20 91 60-30-18-62-15-92 4-30-19-60-16-90 28z"
+        fill="url(#hair)" opacity=".98"/>
+
+  <!-- Eyes -->
+  <g>
+    <ellipse cx="214" cy="260" rx="30" ry="22" fill="#0b0e19"/>
+    <ellipse cx="298" cy="260" rx="30" ry="22" fill="#0b0e19"/>
+
+    <ellipse cx="214" cy="262" rx="21" ry="16" fill="#8b7dff" opacity=".9"/>
+    <ellipse cx="298" cy="262" rx="21" ry="16" fill="#8b7dff" opacity=".9"/>
+
+    <ellipse cx="214" cy="264" rx="12" ry="10" fill="#d6d2ff" opacity=".85"/>
+    <ellipse cx="298" cy="264" rx="12" ry="10" fill="#d6d2ff" opacity=".85"/>
+
+    <circle cx="205" cy="255" r="4" fill="#ffffff"/>
+    <circle cx="289" cy="255" r="4" fill="#ffffff"/>
+  </g>
+
+  <!-- Brows -->
+  <path d="M185 232c14-10 30-14 46-8" stroke="#2c1c1c" stroke-opacity=".45" stroke-width="7" stroke-linecap="round" fill="none"/>
+  <path d="M327 232c-14-10-30-14-46-8" stroke="#2c1c1c" stroke-opacity=".45" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Nose + mouth -->
+  <path d="M255 285c-10 8-10 18 0 26" stroke="#9b6e64" stroke-opacity=".35" stroke-width="6" stroke-linecap="round" fill="none"/>
+  <path d="M224 318c20 14 44 14 64 0" stroke="#7b3b4a" stroke-opacity=".55" stroke-width="7" stroke-linecap="round" fill="none"/>
+
+  <!-- Hoodie collar -->
+  <path d="M165 420c20-70 58-110 91-110s71 40 91 110c-28 18-57 25-91 25s-63-7-91-25z"
+        fill="#0d1728" opacity=".96"/>
+  <path d="M195 395c18-32 38-52 61-52s43 20 61 52c-18 8-38 12-61 12s-43-4-61-12z"
+        fill="#081020" opacity=".96"/>
+
+  <!-- Small aura highlights -->
+  <g opacity=".7">
+    <circle cx="120" cy="150" r="6" fill="#38f5ff"/>
+    <circle cx="415" cy="170" r="5" fill="#38f5ff"/>
+    <circle cx="420" cy="320" r="4" fill="#0d9eff"/>
+    <circle cx="90" cy="310" r="4" fill="#0d9eff"/>
+  </g>
+</svg>
