@@ -1,58 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>KL University Attendance & Bunk Planner | Free Tool</title>
-  <meta name="description" content="KL University Attendance Calculator with L-T-P-S + Bunk Planner. Track weighted attendance and plan safe bunks to stay above 85%. Free tool for students.">
-  
-  <!-- Additional SEO Meta Tags -->
-  <meta name="keywords" content="KL University, attendance calculator, bunk planner, L-T-P-S, safe attendance, student tool, KLU attendance, weighted attendance">
-  <meta name="author" content="Veera0, Sri, Veyron">
-  <meta name="robots" content="index, follow">
-  <link rel="canonical" href="https://your-domain.com"> <!-- Replace with your actual URL -->
-
-  <!-- Open Graph (Facebook, LinkedIn, etc.) -->
-  <meta property="og:title" content="KL University Attendance & Bunk Planner | Free Tool">
-  <meta property="og:description" content="Calculate weighted attendance for L-T-P-S components and plan safe bunks. Stay above 85% for KL University students.">
-  <meta property="og:image" content="https://your-domain.com/images/klu-attendance-thumbnail.jpg"> <!-- Replace with actual image URL -->
-  <meta property="og:url" content="https://your-domain.com">
-  <meta property="og:type" content="website">
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="KL University Attendance & Bunk Planner | Free Tool">
-  <meta name="twitter:description" content="Calculate weighted attendance for L-T-P-S components and plan safe bunks. Stay above 85% for KL University students.">
-  <meta name="twitter:image" content="https://your-domain.com/images/klu-attendance-thumbnail.jpg"> <!-- Replace with actual image URL -->
-  <meta name="twitter:site" content="@your_twitter_handle"> <!-- Optional -->
-
-  <!-- Structured Data (JSON-LD) for Rich Snippets -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "KL University Attendance & Bunk Planner",
-    "description": "Free tool to calculate weighted L-T-P-S attendance and plan safe bunks for KL University students.",
-    "url": "https://your-domain.com",
-    "applicationCategory": "EducationalApplication",
-    "operatingSystem": "Web Browser",
-    "author": {
-      "@type": "Organization",
-      "name": "Veera0, Sri, Veyron"
-    },
-    "offers": {
-      "@type": "Offer",
-      "price": "0",
-      "priceCurrency": "USD"
-    }
-  }
-  </script>
-
+  <meta name="description" content="KL University Attendance Calculator with L-T-P-S + Bunk Planner. Track weighted attendance and plan safe bunks to stay above 85%.">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
+  <aside class="sidebar" aria-label="Quick actions">
+    <button class="sidebar-button sidebar-menu-button" type="button" aria-label="Menu">
+      <span class="hamburger-icon" aria-hidden="true"></span>
+      <span class="sidebar-tooltip">Menu</span>
+    </button>
+    <button id="aura-guide-btn" class="sidebar-button" type="button" aria-label="Split Screen Setup Guide">
+      <img class="sidebar-anime-icon" src="assets/sidebar-split.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Split Screen Setup Guide</span>
+    </button>
+    <button id="history-btn" class="sidebar-button" type="button" aria-label="History">
+      <img class="sidebar-anime-icon" src="assets/sidebar-history.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">History</span>
+    </button>
+    <button id="feedback-btn" class="sidebar-button" type="button" aria-label="Feedback">
+      <img class="sidebar-anime-icon" src="assets/sidebar-feedback.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Feedback</span>
+    </button>
+    <button id="sidebar-signout-btn" class="sidebar-button hidden" type="button" aria-label="Sign Out">
+      <img class="sidebar-anime-icon" src="assets/sidebar-signout.png" alt="" aria-hidden="true">
+      <span class="sidebar-tooltip">Sign Out</span>
+    </button>
+  </aside>
+
+  <!-- Header: shows the app title plus global theme/auth controls. -->
   <header>
     <div class="header-content">
       <div class="title-group">
@@ -60,49 +42,74 @@
         <h1>Attendance & Bunk Planner</h1>
         <p class="subtitle">Weighted L-T-P-S Calculator | Stay above target % & plan safe bunks</p>
       </div>
-      <button id="theme-toggle" aria-pressed="false">Toggle Theme</button>
+      <div class="header-actions">
+        <!-- Theme button is connected to script.js and toggles dark/light mode. -->
+        <button id="theme-toggle" aria-pressed="false">Toggle Theme</button>
+        <!-- Auth button opens sign-in and is hidden after Firebase login. -->
+        <button id="auth-btn" class="ghost-btn" type="button">Sign in</button>
+      </div>
     </div>
   </header>
 
   <main>
+    <!-- Home panel: first screen with buttons that open each calculator/tool section. -->
     <section class="panel hero">
       <h2>Welcome</h2>
       <p>Use the tabs below to calculate your current weighted attendance or plan safe bunks for upcoming classes.</p>
       <div class="hero-actions">
-        <button id="current-btn">Current Attendance %</button>
-        <button id="bunk-btn" class="highlight">Bunk Planner</button>
+        <!-- Navigation buttons: script.js listens to these ids and opens the matching section. -->
+        <div class="dashboard-primary-row">
+          <button id="current-btn" class="dashboard-card-btn" type="button">Current Attendance %</button>
+          <button id="bunk-btn" class="dashboard-card-btn highlight" type="button">Bunk Planner</button>
+          <button id="safe-zone-btn" class="dashboard-card-btn" type="button">Safe Zone</button>
+        </div>
+        <div class="dashboard-secondary-row">
+          <button id="launch-erp-btn" class="ghost-btn launch-erp-btn" type="button">Launch KLU ERP Side-by-Side</button>
+        </div>
       </div>
     </section>
 
+    <!-- Current Attendance section: calculates weighted attendance from portal percentages. -->
     <section id="current-section" class="panel hidden" aria-live="polite">
       <h2>Current Attendance Calculator</h2>
       <p>Enter component-wise percentages from the KLU portal. Leave fields blank if a component is absent.</p>
+      <label>
+        Calculation name (optional):
+        <input type="text" id="calc-name-current" maxlength="48" placeholder="e.g. DS Unit-2 (morning)" autocomplete="off">
+      </label>
       <div class="grid">
         <label>
           Lecture %:
-          <input type="number" id="lecture-pct" min="0" max="100" step="0.01" placeholder="e.g. 92.5">
+          <input type="number" id="lecture-pct" min="0" max="100" step="0.01" placeholder="e.g. 92.5" autocomplete="off">
         </label>
         <label>
           Tutorial %:
-          <input type="number" id="tutorial-pct" min="0" max="100" step="0.01" placeholder="e.g. 80">
+          <input type="number" id="tutorial-pct" min="0" max="100" step="0.01" placeholder="e.g. 80" autocomplete="off">
         </label>
         <label>
           Practical %:
-          <input type="number" id="practical-pct" min="0" max="100" step="0.01" placeholder="e.g. 65">
+          <input type="number" id="practical-pct" min="0" max="100" step="0.01" placeholder="e.g. 65" autocomplete="off">
         </label>
         <label>
           Skilling %:
-          <input type="number" id="skilling-pct" min="0" max="100" step="0.01" placeholder="e.g. 90">
+          <input type="number" id="skilling-pct" min="0" max="100" step="0.01" placeholder="e.g. 90" autocomplete="off">
         </label>
       </div>
+      <!-- Calculate button calls the current-attendance calculation listener in script.js. -->
       <button id="calc-current">Calculate Overall %</button>
+      <!-- Result card is filled dynamically after the user calculates. -->
       <div id="current-result" class="result-card hidden"></div>
       <button class="back-btn">Back to Home</button>
     </section>
 
+    <!-- Bunk Planner/Safe Zone section: reused for safe bunk planning and compulsory attendance. -->
     <section id="bunk-section" class="panel hidden" aria-live="polite">
       <h2>Bunk Planner</h2>
       <p>Choose your subject combination, enter current attendance data, and plan remaining classes safely.</p>
+      <label>
+        Calculation name (optional):
+        <input type="text" id="calc-name-bunk" maxlength="48" placeholder="e.g. OS (weekly)" autocomplete="off">
+      </label>
 
       <label>
         Subject Type:
@@ -118,6 +125,7 @@
       </label>
       
 
+      <!-- Dynamic current-status inputs are inserted here based on selected subject type. -->
       <div id="bunk-current-inputs"></div>
 
       <label>
@@ -137,18 +145,111 @@
         <label><input type="radio" name="remaining-type" value="months"> By months</label>
       </fieldset>
 
+      <!-- Dynamic future-class inputs are inserted here based on direct/week/month method. -->
       <div id="remaining-inputs"></div>
 
+      <!-- Calculate button runs either Bunk Planner or Safe Zone logic based on active mode. -->
       <button id="calc-bunk">Calculate Safe Bunks</button>
+      <!-- Result card is filled with safe bunks, compulsory attendance, or warning output. -->
       <div id="bunk-result" class="result-card hidden"></div>
+      <button class="back-btn">Back to Home</button>
+    </section>
+
+    <!-- History section: shows saved calculations for the signed-in user. -->
+    <section id="history-section" class="panel hidden" aria-live="polite">
+      <h2>History (30 days)</h2>
+      <p>Your saved calculations are stored on this device, linked to your login.</p>
+      <div class="history-actions">
+        <!-- Refresh reloads local history; clear deletes the signed-in user's local history. -->
+        <button id="refresh-history" class="ghost-btn" type="button">Refresh</button>
+        <button id="clear-history" class="ghost-btn danger-btn" type="button">Clear my history</button>
+      </div>
+      <!-- script.js renders history rows inside this container. -->
+      <div id="history-list" class="history-list"></div>
+      <button class="back-btn">Back to Home</button>
+    </section>
+
+    <!-- Feedback section: lets signed-in users save feedback locally for later review. -->
+    <section id="feedback-section" class="panel hidden" aria-live="polite">
+      <h2>Feedback</h2>
+      <p>Tell me what’s confusing, what’s missing, or what feature you want next.</p>
+      <label>
+        Your message:
+        <textarea id="feedback-text" rows="5" placeholder="Write here..." maxlength="800"></textarea>
+      </label>
+      <div class="grid">
+        <label>
+          Rating:
+          <select id="feedback-rating">
+            <option value="5">5 - Excellent</option>
+            <option value="4">4 - Good</option>
+            <option value="3" selected>3 - Okay</option>
+            <option value="2">2 - Needs work</option>
+            <option value="1">1 - Bad</option>
+          </select>
+        </label>
+        <label>
+          Optional contact:
+          <input id="feedback-contact" type="text" placeholder="email/insta (optional)" maxlength="64" autocomplete="off">
+        </label>
+      </div>
+      <!-- Submit button calls submitFeedback() in script.js. -->
+      <button id="submit-feedback" class="highlight" type="button">Submit feedback</button>
+      <!-- Feedback status message is inserted here after submit. -->
+      <div id="feedback-result" class="result-card hidden"></div>
       <button class="back-btn">Back to Home</button>
     </section>
   </main>
 
+  <!-- Footer: small credit line at the bottom of the page. -->
   <footer>
-    <p>Free tool for KL University students | Built with ❤️ by VeyraSri </p>
+    <p>Free tool for KL University students | Built with VeyraSri</p>
   </footer>
 
-  <script src="js/script.js"></script>
+  <!-- Aura Guide Modal: step-by-step helper for opening ERP beside this planner. -->
+  <div id="auraModal" class="aura-modal hidden" role="dialog" aria-modal="true" aria-labelledby="auraTitle">
+    <div class="aura-content">
+      <div class="aura-character">
+        <img src="assets/aura-chan.svg" alt="Aura-chan guide" width="110" height="110">
+      </div>
+      <div class="aura-speech-bubble">
+        <h3 id="auraTitle">Hey Friend — let’s set up Split View.</h3>
+        <!-- script.js changes this body for each Aura guide step. -->
+        <div id="auraBody" class="aura-body"></div>
+        <div class="aura-actions">
+          <button id="aura-launch" class="aura-btn" type="button">1) Launch KLU ERP</button>
+          <button id="aura-next" class="aura-btn secondary" type="button">Next</button>
+          <button id="aura-close" class="aura-btn secondary" type="button">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auth Modal: protects Safe Zone, History, and Feedback features. -->
+  <div id="authModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="authTitle">Sign in to unlock Safe Zone</h3>
+        <button id="auth-close" class="icon-btn" type="button" aria-label="Close">✕</button>
+      </div>
+      <p class="modal-subtitle">Current & Bunk Planner are free. Safe Zone requires login.</p>
+      <div class="modal-actions">
+        <button id="signin-google" class="highlight" type="button">Continue with Google</button>
+      </div>
+      <div class="divider"><span>or</span></div>
+      <label>
+        Email (magic link):
+        <input id="email-link-input" type="email" placeholder="you@klu.ac.in" autocomplete="email">
+      </label>
+      <button id="send-email-link" class="ghost-btn" type="button">Send sign-in link</button>
+      <!-- Authentication success/error messages are rendered here. -->
+      <div id="auth-result" class="result-card hidden"></div>
+    </div>
+  </div>
+
+  <!-- Firebase module exposes auth helpers before the main app logic runs. -->
+  <script type="module" src="js/firebase.js"></script>
+  <!-- Main app logic: navigation, calculations, history, feedback, and UI behavior. -->
+  <script src="js/script.js" defer></script>
 </body>
 </html>
